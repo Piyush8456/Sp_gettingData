@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<style>
+    .pagination {
+        display: inline-block;
+    }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background-color .3s;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+        }
+
+            .pagination a.active {
+                background-color: #007bff;
+                color: white;
+                border: 1px solid #007bff;
+            }
+
+            .pagination a:hover:not(.active) {
+                background-color: #ddd;
+            }
+</style>
+<body>
+    @*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#Button1").click(function () {
+                alert("Hello guys");
+            });
+        });
+    </script>*@
+
+
+    <h4>Employees</h4>
+    <hr />
+    <button id="Button1" runat="server" Text="button"> button</button>
+    <table id="WebGrid" class="Grid">
+        <thead>
+            <tr>
+                <th>Employee ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Mobile Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Model)
+            {
+                <tr>
+                    <td>@employee.employeeId</td>
+                    <td>@employee.firstName</td>
+                    <td>@employee.lastName</td>
+                    <td>@employee.mobileNumber</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <br />
+    <div class="Pager"></div>
+    <script type="text/javascript">
+        $(function () {
+            alert("load");
+        GetEmployees(1,10);
+    });
+
+    //$("body").on("click", ".Pager .page", function () {
+    //    GetEmployees(parseInt($(this).attr('page')));
+    //});
+
+        function GetEmployees(pageIndex, pageSize) {
+            debugger
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("AjaxMethod123", "Employees")",
+            data: { pageIndex: pageIndex, PageSize: pageSize},
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                debugger
+                console.log(response);
+                $("#WebGrid tbody").empty();
+                $.each(response, function (index, employee) {
+                    $("#WebGrid tbody").append('<tr><td>' + employee.employeeId + '</td><td>' + employee.firstName + '</td><td>' + employee.lastName + '</td><td>' + employee.mobileNumber + '</td></tr>');
+                });
+
+                // Remove existing pagination links
+                $(".pagination").remove();
+
+                // Add new pagination links
+                var pagination = '<ul class="pagination">';
+                for (var i = 1; i <= response.totalPages; i++) {
+                    pagination += '<li><a href="#" class="page" data-pageIndex="' + i + '">' + i + '</a></li>';
+                }
+                pagination += '</ul>';
+                $(".Pager").append(pagination);
+
+                // Highlight the current page
+                $(".pagination li a").removeClass("active");
+                $(".pagination li a[data-pageIndex='" + response.pageIndex + "']").addClass("active");
+            },
+            error: function (response) {
+                alert(response.responsetext);
+            }
+        });
+    };
+    </script>
+
+
+</body>
+</html>
